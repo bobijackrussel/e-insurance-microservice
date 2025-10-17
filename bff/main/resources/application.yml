@@ -1,0 +1,103 @@
+# ===============================
+# SSL set up
+# ===============================
+server:
+  port: 8903
+  compression:
+    enabled: false
+
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:ssl/localhost.p12
+    key-store-password: rootroot
+    key-store-provider: SunJSSE
+trust:
+  store: classpath:ssl/localhost.p12
+  store-password: rootroot
+
+# ===============================
+# Logging & Audit
+# ===============================
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web.csrf: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.web.client: trace
+  pattern:
+    console: "%C{1} [%-5level] %d{HH:mm:ss} - %msg%n"
+# ===============================
+# Frontend clients
+# ===============================
+clients:
+  admin: https://localhost:8905
+  user: https://localhost:8904
+
+# ===============================
+# Keycloak settings
+# ===============================
+keycloak:
+  userclientid: userApp-client
+  usersecret: bisCoPa6XNmjoYqglaikCRmarzg2mEvo
+
+  adminclientid: adminApp-client
+  adminsecret: nzkzf9Lq8DHff92s6wdHRQh3mfuMf66U
+
+  granttype:
+    code: authorization_code
+    refresh: refresh_token
+
+  url: https://localhost:9098/realms/todoapp-realm/protocol/openid-connect
+
+# ===============================
+# Resource server
+# ===============================
+resourceserver:
+  url: https://localhost:8901
+
+# ===============================
+# Cookies
+# ===============================
+cookie:
+  domain: localhost
+
+# ===============================
+# Spring Cloud Gateway
+# ===============================
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-route
+          uri: https://localhost:8901
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+            - StripPrefix=1
+        - id: admin-route
+          uri: https://localhost:8901
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+            - StripPrefix=1
+
+# ===============================
+# Google captcha
+# ===============================
+recaptcha:
+  secret: 6LdMl8YrAAAAAEkphPa0RcVM5nzdK_qHjE4ooUeW
+  client: 6LdMl8YrAAAAAF7Slw6MpXNutHfKOg8bFZODPHws
+  threshold: 0.5
+turnstile:
+  secret: 0x4AAAAAAB1Y6LU6cKj0zeGkaIJMc2FAKYc
+
+# ===============================
+# JWT
+# ===============================
+jwt:
+  signing-secret: JWT_SIGNING_SECRET
+  cookie-name: recaptcha-jwt
+  ttl-seconds: 28800 # 8 hours
