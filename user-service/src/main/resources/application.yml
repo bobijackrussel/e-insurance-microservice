@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: user-service
+  config:
+    import: "configserver:http://localhost:8888"
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 10
+        max-interval: 3000

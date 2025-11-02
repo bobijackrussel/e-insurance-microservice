@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # Database
+  # ==========================================
+  postgres:
+    container_name: postgres-db
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database-scripts/docker-init.sql:/docker-entrypoint-initdb.d/init-databases.sql
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================
+  # pgAdmin (web UI for Postgres)
+  # ==========================================
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: sniprojekat@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"        # open http://localhost:5050
+    depends_on:
+      - postgres
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  # ==========================================
+  # Authentication & Authorization
+  # ==========================================
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - "9098:8080"   # HTTP (changed from HTTPS for development)
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    networks:
+      - microservices-net
+    command:
+      - start-dev
+      - --http-enabled=true
+      - --hostname-strict=false
+    restart: unless-stopped
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  microservices-net:
+    driver: bridge
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres-data:
+    driver: local
