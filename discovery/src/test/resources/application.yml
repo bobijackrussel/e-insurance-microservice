@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: discovery-service-test
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
