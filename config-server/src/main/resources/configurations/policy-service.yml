@@ -1,0 +1,63 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: policy-service
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/policy_service_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  # JPA/Hibernate Configuration
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  # Flyway Configuration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+# Keycloak Configuration
+keycloak:
+  auth-server-url: http://localhost:9098
+  realm: e-insurance
+  resource: e-insurance-backend
+  jwk-set-uri: http://localhost:9098/realms/e-insurance/protocol/openid-connect/certs
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+# Management & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.einsurance: DEBUG

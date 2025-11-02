@@ -1,0 +1,50 @@
+server:
+  port: ${GATEWAY_PORT:8903}
+  compression:
+    enabled: ${GATEWAY_COMPRESSION_ENABLED:false}
+
+clients:
+  admin: ${ADMIN_CLIENT_ORIGIN:http://localhost:8905}
+  user: ${USER_CLIENT_ORIGIN:http://localhost:8904}
+
+keycloak:
+  userclientid: ${KEYCLOAK_USER_CLIENT_ID:userApp-client}
+  usersecret: ${KEYCLOAK_USER_SECRET:}
+  adminclientid: ${KEYCLOAK_ADMIN_CLIENT_ID:adminApp-client}
+  adminsecret: ${KEYCLOAK_ADMIN_SECRET:}
+  granttype:
+    code: authorization_code
+
+recaptcha:
+  secret: ${RECAPTCHA_SECRET:}
+  client: ${RECAPTCHA_CLIENT:}
+  threshold: ${RECAPTCHA_THRESHOLD:0.5}
+
+turnstile:
+  secret: ${TURNSTILE_SECRET:}
+  cookie-name: ${TURNSTILE_COOKIE_NAME:human}
+  cookie-max-age-hours: ${TURNSTILE_COOKIE_MAX_AGE_HOURS:24}
+
+jwt:
+  signing-secret: ${JWT_SIGNING_SECRET:}
+  cookie-name: ${JWT_COOKIE_NAME:recaptcha-jwt}
+  ttl-seconds: ${JWT_TTL_SECONDS:28800}
+
+gateway:
+  callback-url: ${GATEWAY_CALLBACK_URL:http://localhost:8903/api/v1/bff/callback}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

@@ -1,0 +1,67 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: notification-service
+
+  # Mail Configuration (Gmail SMTP)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # Thymeleaf Configuration
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+# Keycloak Configuration
+keycloak:
+  auth-server-url: http://localhost:9098
+  realm: e-insurance
+  resource: e-insurance-backend
+  jwk-set-uri: http://localhost:9098/realms/e-insurance/protocol/openid-connect/certs
+
+# PDF Generation Configuration
+pdf:
+  company-name: E-Insurance Co.
+  output-path: ./generated-pdfs
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+# Management & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.einsurance: DEBUG
+    org.springframework.mail: DEBUG

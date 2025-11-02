@@ -1,0 +1,41 @@
+server:
+  port: 8070
+
+spring:
+  application:
+    name: claims-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/claims_service_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+application:
+  config:
+    policy-url: http://localhost:8222/api/policies
+    notification-url: http://localhost:8222/api/notifications
+
+keycloak:
+  auth-server-url: http://localhost:9098
+  realm: einsurance-realm
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

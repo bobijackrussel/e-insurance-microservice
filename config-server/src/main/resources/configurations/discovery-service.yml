@@ -1,0 +1,25 @@
+server:
+  port: ${DISCOVERY_SERVICE_PORT:8761}
+
+spring:
+  application:
+    name: discovery-service
+
+security:
+  require-ssl: ${DISCOVERY_REQUIRE_SSL:false}
+
+eureka:
+  instance:
+    hostname: ${EUREKA_HOST:localhost}
+    prefer-ip-address: true
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${DISCOVERY_EUREKA_URL:http://${EUREKA_HOST:localhost}:${DISCOVERY_SERVICE_PORT:8761}/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

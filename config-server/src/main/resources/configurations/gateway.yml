@@ -1,0 +1,139 @@
+server:
+  port: 8903
+
+spring:
+  application:
+    name: gateway
+
+  # Cloud Gateway Configuration
+  cloud:
+    gateway:
+      routes:
+        # User Service Routes
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=0
+
+        # Policy Service Routes
+        - id: policy-service
+          uri: lb://policy-service
+          predicates:
+            - Path=/api/policies/**
+          filters:
+            - StripPrefix=0
+
+        # Payment Service Routes
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=0
+
+        # Claims Service Routes
+        - id: claims-service
+          uri: lb://claims-service
+          predicates:
+            - Path=/api/claims/**
+          filters:
+            - StripPrefix=0
+
+        # Notification Service Routes
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - StripPrefix=0
+
+      # Global CORS Configuration
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:4200"
+              - "http://localhost:8904"
+              - "http://localhost:8905"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 3600
+
+# Client Origins
+clients:
+  admin: http://localhost:8905
+  user: http://localhost:8904
+
+# Keycloak Configuration
+keycloak:
+  auth-server-url: http://localhost:9098
+  realm: e-insurance
+  userclientid: userApp-client
+  usersecret: change-me
+  adminclientid: adminApp-client
+  adminsecret: change-me
+  granttype:
+    code: authorization_code
+
+# reCAPTCHA Configuration
+recaptcha:
+  secret: 6LdMl8YrAAAAAEkphPa0RcVM5nzdK_qHjE4ooUeW
+  client: 6LdMl8YrAAAAAHa-pQ_L8LZ5h5VzEF1yLy8VG8nQ
+  threshold: 0.5
+
+# Cloudflare Turnstile Configuration
+turnstile:
+  secret: 0x4AAAAAAB1Y6LU6cKj0zeGkaIJMc2FAKYc
+  cookie-name: human
+  cookie-max-age-hours: 24
+
+# JWT Configuration
+jwt:
+  signing-secret: JWT_SIGNING_SECRET_CHANGE_THIS_IN_PRODUCTION
+  cookie-name: recaptcha-jwt
+  ttl-seconds: 28800
+
+# Gateway Configuration
+gateway:
+  callback-url: http://localhost:8903/api/v1/bff/callback
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+
+# Management & Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.einsurance: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
