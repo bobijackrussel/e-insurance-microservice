@@ -1,0 +1,92 @@
+<div>
+  <div class="mb-6">
+    <h2 class="text-2xl text-gray-900 mb-4">Available Insurance Policies</h2>
+
+    <!-- Filter -->
+    <div class="flex gap-2">
+      <button
+        (click)="setFilter('ALL')"
+        [class]="'px-4 py-2 rounded transition-colors ' + (filterType === 'ALL' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50')">
+        All
+      </button>
+      <button
+        (click)="setFilter('LIFE')"
+        [class]="'px-4 py-2 rounded transition-colors ' + (filterType === 'LIFE' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50')">
+        Life
+      </button>
+      <button
+        (click)="setFilter('TRAVEL')"
+        [class]="'px-4 py-2 rounded transition-colors ' + (filterType === 'TRAVEL' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50')">
+        Travel
+      </button>
+      <button
+        (click)="setFilter('PROPERTY')"
+        [class]="'px-4 py-2 rounded transition-colors ' + (filterType === 'PROPERTY' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50')">
+        Property
+      </button>
+      <button
+        (click)="setFilter('HEALTH')"
+        [class]="'px-4 py-2 rounded transition-colors ' + (filterType === 'HEALTH' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50')">
+        Health
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-8">
+    <p class="text-gray-600">Loading policies...</p>
+  </div>
+
+  <!-- Policy Grid -->
+  <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let policy of filteredPolicies" class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="mb-4">
+        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+          {{ policy.type }}
+        </span>
+      </div>
+
+      <h3 class="text-xl text-gray-900 mb-2">{{ policy.name }}</h3>
+      <p class="text-gray-600 text-sm mb-4">{{ policy.description }}</p>
+
+      <div class="space-y-2 mb-4">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-600">Coverage:</span>
+          <span class="text-gray-900">{{ policy.coverage }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-600">Duration:</span>
+          <span class="text-gray-900">{{ policy.duration }}</span>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 pt-4 mt-4">
+        <div class="flex items-end justify-between mb-4">
+          <span class="text-gray-600 text-sm">Premium</span>
+          <div>
+            <span class="text-3xl text-gray-900">${{ policy.price }}</span>
+            <span class="text-gray-600 text-sm">/month</span>
+          </div>
+        </div>
+
+        <button
+          (click)="handlePurchase(policy)"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors">
+          Purchase Policy
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && filteredPolicies.length === 0" class="text-center py-8">
+    <p class="text-gray-600">No policies found for the selected filter.</p>
+  </div>
+
+  <!-- Payment Modal -->
+  <app-payment-modal
+    *ngIf="selectedPolicy"
+    [policy]="selectedPolicy"
+    (close)="closeModal()">
+  </app-payment-modal>
+</div>

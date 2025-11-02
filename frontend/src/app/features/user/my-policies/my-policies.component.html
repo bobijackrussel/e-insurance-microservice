@@ -1,0 +1,90 @@
+<div>
+  <h2 class="text-2xl text-gray-900 mb-6">My Insurance Policies</h2>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-8">
+    <p class="text-gray-600">Loading policies...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && policies.length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+    <p class="text-gray-600">You don't have any policies yet.</p>
+    <p class="text-sm text-gray-500 mt-2">Browse our marketplace to purchase your first policy.</p>
+  </div>
+
+  <!-- Policies List -->
+  <div *ngIf="!loading && policies.length > 0" class="space-y-4">
+    <div *ngFor="let policy of policies" class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h3 class="text-xl text-gray-900 mb-1">{{ policy.template.name }}</h3>
+          <p class="text-sm text-gray-600">Policy #: {{ policy.policyNumber }}</p>
+        </div>
+        <span [class]="'px-3 py-1 rounded text-sm ' + getStatusColor(policy.status)">
+          {{ policy.status }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        <div>
+          <p class="text-sm text-gray-600">Type</p>
+          <p class="text-gray-900">{{ policy.template.type }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Coverage</p>
+          <p class="text-gray-900">{{ policy.template.coverage }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Premium</p>
+          <p class="text-gray-900">${{ policy.premium }}/month</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Valid Until</p>
+          <p class="text-gray-900">{{ formatDate(policy.endDate) }}</p>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 pt-4">
+        <div class="flex gap-3 flex-wrap">
+          <button
+            (click)="downloadPDF(policy)"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+            Download PDF
+          </button>
+          <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50">
+            View Details
+          </button>
+          <button
+            *ngIf="policy.status === 'ACTIVE'"
+            (click)="handleCancelPolicy(policy.id)"
+            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">
+            Cancel Policy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Policy Dialog -->
+  <div *ngIf="showCancelDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <h3 class="text-xl text-gray-900 mb-4">Cancel Policy?</h3>
+      <p class="text-gray-600 mb-6">
+        Are you sure you want to cancel this policy? This action cannot be undone.
+        You will lose coverage and may not be able to reactivate this policy.
+      </p>
+      <div class="flex gap-3">
+        <button
+          (click)="closeCancelDialog()"
+          class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50">
+          Keep Policy
+        </button>
+        <button
+          (click)="confirmCancelPolicy()"
+          class="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+          Yes, Cancel Policy
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,137 @@
+<div>
+  <h2 class="text-2xl text-gray-900 mb-6">Submit Insurance Claim</h2>
+
+  <div *ngIf="loadingPolicies" class="text-center py-8">
+    <p class="text-gray-600">Loading your policies...</p>
+  </div>
+
+  <div *ngIf="policiesError" class="bg-red-50 border border-red-200 text-red-700 rounded p-4 mb-6">
+    {{ policiesError }}
+  </div>
+
+  <div *ngIf="!loadingPolicies && activePolicies.length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+    <p class="text-gray-600">You don't have any active policies to submit a claim for.</p>
+    <p class="text-sm text-gray-500 mt-2">
+      Purchase a policy first to be able to submit claims.
+    </p>
+  </div>
+
+  <div *ngIf="!loadingPolicies && activePolicies.length > 0" class="bg-white rounded-lg shadow p-6">
+    <form [formGroup]="claimForm" (ngSubmit)="onSubmit()">
+      <div *ngIf="successMessage" class="bg-green-50 border border-green-200 text-green-800 rounded p-4 mb-6">
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-700 rounded p-4 mb-6">
+        {{ errorMessage }}
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm text-gray-700 mb-2">
+          Select Policy <span class="text-red-500">*</span>
+        </label>
+        <select
+          formControlName="customerPolicyId"
+          class="w-full px-3 py-2 border border-gray-300 rounded"
+          [disabled]="submitting">
+          <option value="">Choose a policy...</option>
+          <option *ngFor="let policy of activePolicies" [value]="policy.id">
+            {{ policy.policyNumber }} - {{ policy.template.name }}
+          </option>
+        </select>
+        <p
+          class="text-sm text-red-600 mt-1"
+          *ngIf="claimForm.get('customerPolicyId')?.touched && claimForm.get('customerPolicyId')?.hasError('required')">
+          Please select a policy.
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 mb-6">
+        <div>
+          <label class="block text-sm text-gray-700 mb-2">
+            Incident Date <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            formControlName="incidentDate"
+            class="w-full px-3 py-2 border border-gray-300 rounded"
+            [disabled]="submitting" />
+          <p
+            class="text-sm text-red-600 mt-1"
+            *ngIf="claimForm.get('incidentDate')?.touched && claimForm.get('incidentDate')?.hasError('required')">
+            Please provide the incident date.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-700 mb-2">
+            Claim Amount ($) <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            formControlName="amount"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            class="w-full px-3 py-2 border border-gray-300 rounded"
+            [disabled]="submitting" />
+          <p
+            class="text-sm text-red-600 mt-1"
+            *ngIf="amountControl?.touched && (amountControl?.hasError('required') || amountControl?.hasError('invalidAmount'))">
+            Enter a valid amount greater than zero.
+          </p>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm text-gray-700 mb-2">
+          Description <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          formControlName="description"
+          rows="6"
+          placeholder="Please provide detailed information about your claim..."
+          class="w-full px-3 py-2 border border-gray-300 rounded"
+          [disabled]="submitting"></textarea>
+        <p
+          class="text-sm text-red-600 mt-1"
+          *ngIf="claimForm.get('description')?.touched && claimForm.get('description')?.hasError('required')">
+          Please describe the incident.
+        </p>
+        <p
+          class="text-sm text-red-600 mt-1"
+          *ngIf="claimForm.get('description')?.touched && claimForm.get('description')?.hasError('minlength')">
+          Description should be at least 10 characters.
+        </p>
+        <p class="text-xs text-gray-500 mt-1">
+          Include all relevant details about the incident, including date, location, and circumstances.
+        </p>
+      </div>
+
+      <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6">
+        <h4 class="text-sm text-blue-900 mb-2">Important Information</h4>
+        <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
+          <li>Claims are typically reviewed within 5-7 business days.</li>
+          <li>You may be contacted for additional documentation.</li>
+          <li>False claims may result in policy cancellation.</li>
+        </ul>
+      </div>
+
+      <div class="flex gap-3 flex-wrap">
+        <button
+          type="button"
+          (click)="clearForm()"
+          class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+          [disabled]="submitting">
+          Clear Form
+        </button>
+        <button
+          type="submit"
+          class="flex-1 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+          [disabled]="submitting">
+          {{ submitting ? 'Submitting...' : 'Submit Claim' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
