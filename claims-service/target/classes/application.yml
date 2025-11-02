@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: claims-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 500
+        max-attempts: 6
+        max-interval: 2000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
