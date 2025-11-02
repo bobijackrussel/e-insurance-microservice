@@ -1,1 +1,0 @@
-sed -i 's/\r$//' setup/entrypoint.sh setup/lib.sh
